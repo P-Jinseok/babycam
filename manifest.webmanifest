@@ -1,0 +1,17 @@
+{
+  "name": "베이비캠",
+  "short_name": "베이비캠",
+  "description": "폰 두 대로 쓰는 간단한 웹 아기 모니터",
+  "lang": "ko",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0d1015",
+  "theme_color": "#0d1015",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

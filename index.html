@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="description" content="폰 두 대로 쓰는 간단한 웹 아기 모니터">
+<meta name="theme-color" content="#0d1015">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="베이비캠">
+<title>베이비캠</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="top">
+  <button class="brand" id="btnHome" type="button" aria-label="처음 화면">
+    <img src="icon.svg" alt=""><span>베이비캠</span>
+  </button>
+  <button class="icon-btn" id="btnSettings" type="button" aria-label="설정">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+  </button>
+</header>
+
+<main>
+  <!-- ================= 처음 화면 ================= -->
+  <section id="home" class="screen">
+    <p class="lead">폰 두 대로 쓰는 간단한 아기 모니터</p>
+
+    <button class="role" id="btnServerMode" type="button">
+      <span class="role-ic" aria-hidden="true">📷</span>
+      <span class="role-txt"><strong>카메라 폰</strong><small>아기 곁에 두는 폰 · 영상과 소리를 보냅니다</small></span>
+      <span class="chev" aria-hidden="true">›</span>
+    </button>
+    <button class="role" id="btnClientMode" type="button">
+      <span class="role-ic" aria-hidden="true">👀</span>
+      <span class="role-txt"><strong>보는 폰</strong><small>보호자가 들고 있는 폰 · 코드로 접속합니다</small></span>
+      <span class="chev" aria-hidden="true">›</span>
+    </button>
+
+    <div class="net" id="netState"></div>
+
+    <div class="card howto">
+      <h3>사용 방법</h3>
+      <ol>
+        <li>카메라 폰에서 <b>송출 시작</b>을 누르면 접속 코드가 나옵니다.</li>
+        <li>보는 폰에서 코드를 입력하거나 공유받은 링크를 엽니다.</li>
+        <li>카메라 폰에서 <b>허용</b>을 누르면 영상과 소리가 연결됩니다.</li>
+      </ol>
+      <p class="tiny">영상은 두 폰 사이에서 암호화되어 전달되며 어디에도 저장되지 않습니다.</p>
+    </div>
+  </section>
+
+  <!-- ================= 카메라 폰 ================= -->
+  <section id="server" class="screen hidden">
+    <div class="stage" id="sStage">
+      <video id="preview" autoplay muted playsinline></video>
+      <div class="pill"><span class="dot" id="sDot"></span><span id="sPill">대기</span></div>
+      <div class="corner" id="sCorner"></div>
+    </div>
+    <p class="status" id="sStatus">송출을 시작하면 접속 코드가 만들어집니다.</p>
+
+    <div id="sIdle">
+      <div class="card">
+        <h3>카메라 선택</h3>
+        <div class="seg" id="segFacing" role="group" aria-label="카메라 선택">
+          <button type="button" data-v="environment" class="on">후면</button>
+          <button type="button" data-v="user">전면</button>
+        </div>
+        <p class="tiny">후면 카메라가 화질이 좋고, 화면 불빛이 아기 쪽을 향하지 않습니다.</p>
+      </div>
+      <button class="btn" id="btnStart" type="button">송출 시작</button>
+      <ul class="tips">
+        <li>충전기를 연결해 두세요.</li>
+        <li>이 화면을 켜 둔 채로 두어야 합니다. 폰 설정의 <b>자동 잠금</b>을 끄면 더 안정적입니다.</li>
+        <li>송출 중에는 <b>화면 어둡게</b>로 불빛을 줄일 수 있습니다.</li>
+      </ul>
+    </div>
+
+    <div id="sRun" class="hidden">
+      <div class="card center">
+        <div class="sub">접속 코드</div>
+        <div class="code" id="codeBox">----</div>
+        <div class="qr hidden" id="qrBox"></div>
+        <div class="grid2">
+          <button class="btn sec" id="btnShare" type="button">링크 공유</button>
+          <button class="btn sec" id="btnQr" type="button">QR 코드</button>
+        </div>
+      </div>
+
+      <div class="card attn hidden" id="pendingCard">
+        <h3>접속 요청</h3>
+        <div id="pendingList"></div>
+        <p class="tiny">허용한 기기는 다음부터 이 코드로 자동 연결됩니다.</p>
+      </div>
+
+      <div class="card">
+        <h3>시청 중인 기기 <span class="count" id="viewerCount">0</span></h3>
+        <div id="viewerList"></div>
+      </div>
+
+      <div class="grid3">
+        <button class="tool" id="btnFlip" type="button"><span class="ti">🔄</span>카메라 전환</button>
+        <button class="tool" id="btnSDim" type="button"><span class="ti">🌙</span>화면 어둡게</button>
+        <button class="tool" id="btnNewCode" type="button"><span class="ti">🔑</span>새 코드</button>
+      </div>
+      <p class="tiny" id="sBattery"></p>
+      <button class="btn bad" id="btnStop" type="button">송출 종료</button>
+    </div>
+  </section>
+
+  <!-- ================= 보는 폰 ================= -->
+  <section id="client" class="screen hidden">
+    <div id="cJoin">
+      <div class="card">
+        <h3>접속 코드 입력</h3>
+        <input id="codeInput" class="code-input" maxlength="9" autocomplete="off" autocorrect="off"
+               autocapitalize="characters" spellcheck="false" enterkeyhint="go" placeholder="XXXX-XXXX" aria-label="접속 코드">
+        <div class="gap"></div>
+        <button class="btn" id="btnConnect" type="button">연결</button>
+        <button class="btn sec hidden" id="btnRecent" type="button"></button>
+        <p class="tiny">카메라 폰 화면에 이 기기 이름 <b id="myName"></b>(으)로 요청이 표시됩니다. 이름은 설정에서 바꿀 수 있습니다.</p>
+      </div>
+    </div>
+
+    <div id="cView" class="hidden">
+      <div class="stage stale" id="cStage">
+        <video id="remote" autoplay muted playsinline></video>
+        <div class="pill"><span class="dot" id="cDot"></span><span id="cPill">연결 중</span></div>
+        <div class="alarm-banner hidden" id="alarmBanner">🔔 소리 감지</div>
+        <button class="fs-close" id="btnFsClose" type="button" aria-label="전체화면 닫기">✕</button>
+        <div class="veil"><span id="veilText">연결 중…</span></div>
+        <div class="meter" aria-hidden="true"><i id="meterFill"></i><b id="meterMark"></b></div>
+      </div>
+      <p class="status" id="cStatus"></p>
+      <div class="info" id="cInfo"></div>
+      <button class="btn hidden" id="btnRetry" type="button">다시 연결</button>
+
+      <div class="grid3">
+        <button class="tool" id="btnMute" type="button"><span class="ti">🔇</span><span>소리 켜기</span></button>
+        <button class="tool" id="btnFull" type="button"><span class="ti">⛶</span>전체화면</button>
+        <button class="tool" id="btnPip" type="button"><span class="ti">▣</span>작은 화면</button>
+        <button class="tool" id="btnSnap" type="button"><span class="ti">📸</span>사진 저장</button>
+        <button class="tool" id="btnCDim" type="button"><span class="ti">🌙</span>화면 어둡게</button>
+        <button class="tool" id="btnAlarm" type="button"><span class="ti">🔔</span><span>소리 알림</span></button>
+      </div>
+
+      <div class="card">
+        <h3>소리 알림</h3>
+        <p class="tiny" id="alarmState"></p>
+        <label class="range">
+          <span>민감도 <b id="sensVal"></b></span>
+          <input type="range" id="sens" min="1" max="100" step="1">
+        </label>
+        <p class="tiny">영상 아래 막대가 노란 선을 1초 이상 넘으면 진동·알림음으로 알려 줍니다.</p>
+        <div id="events" class="events"></div>
+      </div>
+
+      <div class="card">
+        <h3>화질</h3>
+        <div class="seg" id="segQuality" role="group" aria-label="화질">
+          <button type="button" data-v="low">절약</button>
+          <button type="button" data-v="mid">표준</button>
+          <button type="button" data-v="high">고화질</button>
+        </div>
+        <p class="tiny" id="qualityHint"></p>
+      </div>
+
+      <button class="btn bad" id="btnLeave" type="button">연결 종료</button>
+    </div>
+  </section>
+</main>
+
+<!-- ================= 설정 ================= -->
+<div class="modal hidden" id="settings" role="dialog" aria-modal="true" aria-labelledby="setTitle">
+  <div class="sheet">
+    <div class="sheet-head">
+      <h2 id="setTitle">설정</h2>
+      <button class="icon-btn" id="btnSetClose" type="button" aria-label="닫기">✕</button>
+    </div>
+
+    <label class="field"><span>이 기기 이름 (접속 요청 시 표시)</span>
+      <input id="fName" maxlength="20" autocomplete="off"></label>
+
+    <h3>LTE·다른 망 연결 (TURN 중계)</h3>
+    <p class="tiny">카메라 폰과 보는 폰이 서로 다른 망(예: 집 와이파이 ↔ LTE)에 있으면 TURN 중계 서버가 필요할 수 있습니다. Metered 무료 계정의 앱 이름과 API Key를 넣어 주세요.</p>
+    <p class="tiny ok-note hidden" id="cfgNotice">이 사이트에 기본 TURN 설정이 들어 있습니다. 아래를 비워 두면 기본 설정을 사용합니다.</p>
+
+    <label class="field"><span>Metered 앱 이름</span>
+      <input id="fMApp" placeholder="예: mybabycam" autocomplete="off" autocapitalize="none" spellcheck="false"></label>
+    <label class="field"><span>Metered API Key</span>
+      <input id="fMKey" placeholder="TURN 대시보드의 API Key" autocomplete="off" autocapitalize="none" spellcheck="false"></label>
+
+    <details class="more">
+      <summary>직접 운영하는 TURN 서버 사용</summary>
+      <label class="field"><span>TURN 주소 (여러 개는 쉼표로 구분)</span>
+        <input id="fTUrl" placeholder="turn:example.com:3478" autocomplete="off" autocapitalize="none" spellcheck="false"></label>
+      <label class="field"><span>사용자 이름</span><input id="fTUser" autocomplete="off" autocapitalize="none" spellcheck="false"></label>
+      <label class="field"><span>비밀번호</span><input id="fTPass" autocomplete="off" autocapitalize="none" spellcheck="false"></label>
+    </details>
+
+    <label class="switch"><input type="checkbox" id="fRelay"><span>항상 TURN 중계로 연결 (점검용)</span></label>
+
+    <div class="grid2">
+      <button class="btn sec" id="btnTest" type="button">TURN 연결 테스트</button>
+      <button class="btn" id="btnSetSave" type="button">저장</button>
+    </div>
+    <p class="tiny test-result" id="testResult"></p>
+  </div>
+</div>
+
+<!-- 화면 어둡게 -->
+<div class="dim hidden" id="dim" role="button" aria-label="화면 어둡게 해제">
+  <div class="dim-inner" id="dimInner">
+    <div class="clock" id="dimClock"></div>
+    <div id="dimText"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="config.js"></script>
+<script src="lib/peerjs.min.js"></script>
+<script src="lib/qrcode.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
